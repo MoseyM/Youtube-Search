@@ -5,21 +5,11 @@
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">Dashboard</div>
-
-                <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-
-                    You are logged in!
-                </div>
-            </div>
-        </div>
+        <form id="searchform" action="#" class="form-inline align-items-center">
+            <input id="search" type="text" class="form-control" name="search" placeholder="Search...">
+            <button type="submit" class="btn btn-outline-dark"><i class="fas fa-search"></i></button>
+        </form>
+        <div class="col-md-9" id="result-box"></div>
     </div>
 </div>
 @endsection
