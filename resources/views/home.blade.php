@@ -12,7 +12,7 @@
                     <?php $snippet = $result->getSnippet(); ?>
                     <div class="col-sm-3 col-4 pb-1">
                         <img src="{{ $snippet->thumbnails->default->url }}" class="mx-auto d-block">
-                        <p class="text-center"><a href="/view/{{ $index }}" class="snippetTitle">{{ $snippet->title }}</a></p>
+                        <p class="text-center"><a href="/view/{{ $index }}">{{ $snippet->title }}</a></p>
                     </div>
                 @endforeach
             @endif
@@ -43,14 +43,24 @@
                     success: function(response){ 
                         var resultBox =  $('#result-box');
                         response.map(function(current, index, f) {
-                            //create a new element
-                            var t = document.createElement('div');
-                            t.classname = 'col-4';
-                            //add thumbnail
-                            //add title
-                            t.classname = 'col-4';
-                            t.innerHTML = "<a href='/video/${current.id.videoId}'>${current.snippet.title}</a>";
-                            console.log(t)
+                            //create a new div element
+                            var t = $("<div class='col-sm-3 col-4 pb-1'>");
+                            //create an image element
+                            const img = $("<img class='mx-auto d-block'>");
+                            img.attr('src',current.snippet.thumbnails.default.url);
+                            //create p elem for title
+                            const p = $("<p class='text-center'>")
+                            //create and append link to p elem
+                            $("<a href='/view/"+index+"'></a>").text(current.snippet.title).appendTo(p)
+                            //append image and p to div
+                            t.append(img)
+                            t.append(p)
+                            //remove the loader spinner to prevent complete from deleting all results.
+                            var elem = document.getElementById('makeitshine');
+                            if(elem) {
+                                elem.remove();
+                            }
+                            //append div to result box
                             resultBox.append(t)
                         });
                     },
