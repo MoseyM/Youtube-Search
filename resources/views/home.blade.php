@@ -5,8 +5,18 @@
 @section('content')
 <div class="container">
     <div class="row justify-content-center">
-        <input id="search" onkeypress="return searchYoutube(event);" type="text" class="col-md-6 form-control" name="search" placeholder="Search...">
-        <div class="col-md-10 row justify-content-center" id="result-box"></div>
+        <input id="search" onkeypress="return searchYoutube(event);" type="text" class="col-md-6 form-control" name="search" value="{{ session('searchTerm') ?? '' }}" placeholder="Search...">
+        <div class="col-md-10 pt-3 row justify-content-center" id="result-box">
+            @if(session()->has('searchResults'))
+                @foreach(session('searchResults') as $index => $result)
+                    <?php $snippet = $result->getSnippet(); ?>
+                    <div class="col-sm-3 col-4 pb-1">
+                        <img src="{{ $snippet->thumbnails->default->url }}" class="mx-auto d-block">
+                        <p class="text-center"><a href="/view/{{ $index }}" class="snippetTitle">{{ $snippet->title }}</a></p>
+                    </div>
+                @endforeach
+            @endif
+        </div>
     </div>
 </div>
 @endsection

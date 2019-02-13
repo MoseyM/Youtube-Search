@@ -41,8 +41,19 @@ class HomeController extends Controller
             'type'       => 'video'
         ];
 
-        $results = $apiClient->search->listSearch('snippet', $params);
+        $results = $apiClient->search->listSearch('snippet', $params)->getItems();
+        // if there are results save to session
+        if(count($results)) {
+            $request->session()->put('searchTerm', $request->input('term'));
+            $request->session()->put('searchResults', $results);
+        }
+        return $results;
+    }
 
-        return $results->getItems();
+    public function view($key)
+    {
+        $data = session('searchResults')[$key];
+
+        return view('view', ['data' => $data]);
     }
 }
