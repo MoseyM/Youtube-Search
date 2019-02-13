@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use \Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
@@ -36,4 +37,27 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
-}
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function sendLoginResponse(Request $request)
+    {
+        //Overriding 5 year time for currently queued cookie if user selected to remember user
+        if($request->filled('remember')) {
+            //Retrieve the cookie name in queue
+            $currentRecallerName = $this->guard()->getRecallerName();
+            //Set new expiry time for cookie (20160 mins or 2 weeks)
+            $expiryCookieTime = 20160;
+            //Update the existing cookie in queue with new expiry time
+            $updatedCookie = $this->guard()->getCookieJar()->getQueuedCookies()[$currentRecallerName];
+            $this->guard()->getCookieJar()->queue($currentRecallerName, $updatedCookie->getValue(), $expiryCookieTime);
+        }
+
+        $request->session()->regenerate();
+
+        $this->clearLoginAttempts($request);
+
+        return $this->authenticated($request, $this->guard()->user())
+                ?: redirect()->intended($this->redirectPath());
+    }}
